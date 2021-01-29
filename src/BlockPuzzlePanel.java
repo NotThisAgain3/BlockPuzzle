@@ -18,10 +18,10 @@ class BlockPuzzlePanel extends JPanel {
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,1,1,1,1,0,1,0,0,0,0,0,0,1},
+            {1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1},
+            {1,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1},
+            {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
             {1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,1},
             {1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -55,11 +55,11 @@ class BlockPuzzlePanel extends JPanel {
             for(int y = 0; y < levelSize.height; y++){
                 switch (level[y][x]) {
                     case 1 -> {
-                        Block solidBlock = new SolidBlock();
-                        solidBlock.x = x;
-                        solidBlock.y = y;
+                        Block movableBlock = new MovableBlock();
+                        movableBlock.x = x;
+                        movableBlock.y = y;
 
-                        blocks.add(solidBlock);
+                        blocks.add(movableBlock);
                     }
 
                     case 2 -> {
@@ -73,17 +73,25 @@ class BlockPuzzlePanel extends JPanel {
         }
     }
 
-    private void findAndMoveNeighbour(Block.DIRECTION direction) {
+    private void findAndMoveNeighbour(Block.DIRECTION direction, Block block) {
         for (Block n : blocks){
             if(n != null && !(n instanceof PlayerBlock)){
-                if(n.x == playerBlock.x && n.y == playerBlock.y + 1 && direction == Block.DIRECTION.BOTTOM)
+                if(n.x == block.x && n.y == block.y + 1 && direction == Block.DIRECTION.BOTTOM) {
+                    findAndMoveNeighbour(direction, n);
                     n.y++;
-                if(n.x == playerBlock.x && n.y == playerBlock.y - 1 && direction == Block.DIRECTION.TOP)
+                }
+                if(n.x == block.x && n.y == block.y - 1 && direction == Block.DIRECTION.TOP) {
+                    findAndMoveNeighbour(direction, n);
                     n.y--;
-                if(n.x == playerBlock.x + 1 && n.y == playerBlock.y && direction == Block.DIRECTION.RIGHT)
+                }
+                if(n.x == block.x + 1 && n.y == block.y && direction == Block.DIRECTION.RIGHT) {
+                    findAndMoveNeighbour(direction, n);
                     n.x++;
-                if(n.x == playerBlock.x - 1 && n.y == playerBlock.y && direction == Block.DIRECTION.LEFT)
+                }
+                if(n.x == block.x - 1 && n.y == block.y && direction == Block.DIRECTION.LEFT) {
+                    findAndMoveNeighbour(direction, n);
                     n.x--;
+                }
             }
         }
     }
@@ -105,33 +113,33 @@ class BlockPuzzlePanel extends JPanel {
             if(e.getKeyCode() == KeyEvent.VK_SPACE)
                 loadLevel();
 
-            Vector2D movement = new Vector2D(0, 0);
+            Vector2D playerMovement = new Vector2D(0, 0);
 
             Block.DIRECTION direction = Block.DIRECTION.NONE;
 
             switch(e.getKeyCode()) {
                 case KeyEvent.VK_UP -> {
                     direction = Block.DIRECTION.TOP;
-                    movement.y--;
+                    playerMovement.y--;
                 }
                 case KeyEvent.VK_LEFT -> {
                     direction = Block.DIRECTION.LEFT;
-                    movement.x--;
+                    playerMovement.x--;
                 }
                 case KeyEvent.VK_DOWN -> {
                     direction = Block.DIRECTION.BOTTOM;
-                    movement.y++;
+                    playerMovement.y++;
                 }
                 case KeyEvent.VK_RIGHT -> {
                     direction = Block.DIRECTION.RIGHT;
-                    movement.x++;
+                    playerMovement.x++;
                 }
             }
 
-            findAndMoveNeighbour(direction);
+            findAndMoveNeighbour(direction, playerBlock);
 
-            playerBlock.x += movement.x;
-            playerBlock.y += movement.y;
+            playerBlock.x += playerMovement.x;
+            playerBlock.y += playerMovement.y;
         }
     }
 }
