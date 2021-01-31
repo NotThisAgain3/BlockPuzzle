@@ -3,28 +3,24 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-//Todo List
 
-
-//Move Blocks by counting all stacked blocks and counting those as one block
-//If other block exert no force on player
 class BlockPuzzlePanel extends JPanel {
 
     int[][] level = {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1},
+            {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-            {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1},
             {1,0,0,1,1,1,1,0,1,0,0,0,0,0,0,1},
             {1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1},
             {1,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1},
-            {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1},
+            {1,0,0,1,1,1,1,0,0,0,1,0,0,0,0,1},
             {1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
-            {1,0,0,0,0,0,2,0,0,0,0,0,0,0,0,1},
-            {1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+            {1,0,0,0,0,0,2,0,1,0,0,0,0,0,0,1},
+            {1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
             {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
@@ -72,28 +68,28 @@ class BlockPuzzlePanel extends JPanel {
             }
         }
     }
-
-    private void findAndMoveNeighbour(Block.DIRECTION direction, Block block) {
+    private boolean findAndMoveNeighbours(Block.DIRECTION direction, Block block) {
         for (Block n : blocks){
             if(n != null && !(n instanceof PlayerBlock)){
                 if(n.x == block.x && n.y == block.y + 1 && direction == Block.DIRECTION.BOTTOM) {
-                    findAndMoveNeighbour(direction, n);
+                    findAndMoveNeighbours(direction, n);
                     n.y++;
                 }
                 if(n.x == block.x && n.y == block.y - 1 && direction == Block.DIRECTION.TOP) {
-                    findAndMoveNeighbour(direction, n);
+                    findAndMoveNeighbours(direction, n);
                     n.y--;
                 }
                 if(n.x == block.x + 1 && n.y == block.y && direction == Block.DIRECTION.RIGHT) {
-                    findAndMoveNeighbour(direction, n);
+                    findAndMoveNeighbours(direction, n);
                     n.x++;
                 }
                 if(n.x == block.x - 1 && n.y == block.y && direction == Block.DIRECTION.LEFT) {
-                    findAndMoveNeighbour(direction, n);
+                    findAndMoveNeighbours(direction, n);
                     n.x--;
                 }
             }
         }
+        return true;
     }
 
     @Override
@@ -136,10 +132,10 @@ class BlockPuzzlePanel extends JPanel {
                 }
             }
 
-            findAndMoveNeighbour(direction, playerBlock);
-
-            playerBlock.x += playerMovement.x;
-            playerBlock.y += playerMovement.y;
+            if(findAndMoveNeighbours(direction, playerBlock)) {
+                playerBlock.x += playerMovement.x;
+                playerBlock.y += playerMovement.y;
+            }
         }
     }
 }
