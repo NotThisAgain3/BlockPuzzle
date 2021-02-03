@@ -4,7 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-class BlockPuzzlePanel extends JPanel {
+class BlockPuzzleCanvas extends Canvas {
 
     int[][] level = {
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -31,7 +31,7 @@ class BlockPuzzlePanel extends JPanel {
     private PlayerBlock playerBlock;
     private static final int DELAY_MS = 80;
 
-    public BlockPuzzlePanel() {
+    public BlockPuzzleCanvas() {
         Timer timer = new Timer(DELAY_MS, e -> repaint());
         timer.start();
 
@@ -93,8 +93,8 @@ class BlockPuzzlePanel extends JPanel {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
         for(Block block : blocks){
